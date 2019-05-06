@@ -25,7 +25,12 @@
 - parameter transformation: pros and cons
     - compress ranges
 	- improve quadraticity/Wald-ness
-	- 
+    - decorrelate
+- multstart?
 
-EXAMPLES
-   functional responses: Stier/Geange et al.
+# examples
+
+- functional responses: Stier/Geange et al.
+- Gonzalez integrated population models???
+
+# questionnaire

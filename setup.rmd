@@ -11,17 +11,20 @@ Note that this list deliberately takes an [everything-but-the-kitchen-sink](http
 
 ```{r pkg1,eval=FALSE}
 ## modeling packages
-mod_pkgs <- c("bbmle", "optimx", "nloptr", "Derivs", "dfoptim", "alabama", "minqa", "subplex", "nlsr", "minpack.lm", "DEoptim")
+mod_pkgs <- c("alabama", "bbmle", "brms", "DEoptim", "Deriv", "dfoptim", 
+              "maxLik", "minpack.lm", "minqa", "nimble", "nloptr",
+              "nls2", "nlshelper", "nlstools", "nls.multstart",
+              "numDeriv", "optimx", "subplex", "TMB")
 ## miscellaneous/data manipulation
-data_pkgs <- c("benchmark", "devtools", "pkgbuild", "emdbook",
-               "plyr", "reshape2", "tidyverse")
+data_pkgs <- c("benchmark", "devtools", "emdbook",
+               "pkgbuild", "plyr", "reshape2", "tidyverse")
 ## graphics
 graph_pkgs <- c("cowplot", "directlabels",
                 "dotwhisker", "GGally", "ggalt", "ggplot2",
                 "ggpubr", "ggstance", "gridExtra",
                 "plotrix", "viridis")
 
-all_pkgs <- c(mod_pkgs,data_pkgs,diag_pkgs,graph_pkgs)
+all_pkgs <- c(mod_pkgs,data_pkgs,graph_pkgs)
 avail_pkgs <- rownames(available.packages())
 already_installed <- rownames(installed.packages())
 to_install <- setdiff(all_pkgs,already_installed)
