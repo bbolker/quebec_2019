@@ -194,7 +194,7 @@ $(document).ready(function () {
 
 
 <ol style="list-style-type: decimal">
-<li><p>Please make sure you have the <strong>latest version</strong> of R (3.6.0) installed from <a href="https://cran.r-project.org/">CRAN</a>.</p></li>
+<li><p>Please make sure you have a <strong>recent</strong> version of R installed from <a href="https://cran.r-project.org/">CRAN</a> (the latest version, 3.6.0, would be best; if you need to use a version older than 3.5, please let me know in advance).</p></li>
 <li><p>The RStudio interface is strongly recommended; you can download it <a href="https://www.rstudio.com/products/rstudio/download/">here</a> (get the free Desktop version).</p></li>
 <li><p>Install primary fitting packages (and a variety of extras). Note that this list deliberately takes an <a href="https://en.wiktionary.org/wiki/everything_but_the_kitchen_sink#English">everything-but-the-kitchen-sink</a> approach, since it will save time to have everything you might want installed in advance. If you have questions or problems, please contact me before the workshop.</p></li>
 </ol>
@@ -202,7 +202,8 @@ $(document).ready(function () {
 mod_pkgs &lt;- c(&quot;alabama&quot;, &quot;bbmle&quot;, &quot;brms&quot;, &quot;DEoptim&quot;, &quot;Deriv&quot;, &quot;dfoptim&quot;, 
               &quot;maxLik&quot;, &quot;minpack.lm&quot;, &quot;minqa&quot;, &quot;nimble&quot;, &quot;nloptr&quot;,
               &quot;nls2&quot;, &quot;nlshelper&quot;, &quot;nlstools&quot;, &quot;nls.multstart&quot;,
-              &quot;numDeriv&quot;, &quot;optimx&quot;, &quot;subplex&quot;, &quot;TMB&quot;)
+              &quot;numDeriv&quot;, &quot;optimx&quot;, &quot;RcppNumerical&quot;, &quot;subplex&quot;, &quot;TMB&quot;)
+
 ## miscellaneous/data manipulation
 data_pkgs &lt;- c(&quot;benchmark&quot;, &quot;devtools&quot;, &quot;emdbook&quot;,
                &quot;pkgbuild&quot;, &quot;plyr&quot;, &quot;reshape2&quot;, &quot;tidyverse&quot;)
@@ -221,7 +222,7 @@ if (length(to_install)&gt;0) {
 }</code></pre>
 <p>There is no need to (re)install packages such as <code>grid</code>, <code>nlme</code>, <code>MASS</code>, <code>mgcv</code>, as they come with a standard R installation.</p>
 <ol start="4" style="list-style-type: decimal">
-<li>Various advanced tools such as TMB and Stan need compilers installed as well:</li>
+<li>Various advanced optimization tools such as <a href="https://github.com/kaskr/adcomp">TMB</a>, <a href="https://mc-stan.org/">Stan</a>, and <a href="https://r-nimble.org/">NIMBLE</a> need compilers installed as well:</li>
 </ol>
 <ul>
 <li>Windows: download Rtools from <a href="https://cran.r-project.org/bin/windows/Rtools/">here</a></li>
@@ -230,7 +231,7 @@ if (length(to_install)&gt;0) {
 </ul>
 <p>Also see <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started">Checking the C++ toolchain</a> from the Stan installation instructions. (Run <code>pkgbuild::has_build_tools(debug=TRUE)</code>.)</p>
 <hr />
-<p>Last updated: 2019-05-05 21:53:24</p>
+<p>Last updated: 2019-05-05 22:07:44</p>
 
 
 
