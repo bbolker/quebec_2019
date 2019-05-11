@@ -1,11 +1,9 @@
 *~
 .Rhistory
-gh-pages/
+.RData
 private/
-*.html
 *_files/
 *_cache/
-glmm.bib
 */#*
 */.#*
 .#*
