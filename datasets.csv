@@ -1,0 +1,4 @@
+"name","latent variables?","source","object name (for Rdata)","reference"
+"tadpoles","n","`emdbook` package (`Reedfrog`)",Reedfrog,@VoneshBolker2005
+"Owls","y","Nest","`glmmTMB` package",,"@roulin_nestling_2007"
+"algae","y","Diego Pujoni, mixed models list",,?

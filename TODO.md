@@ -31,6 +31,13 @@
 # examples
 
 - functional responses: Stier/Geange et al.
+- Ellner survival
+- Pujoni algae
 - Gonzalez integrated population models???
+- tadpoles?
+- Owls?
+- McCoy tadpoles?
 
 # questionnaire
+
+https://kaskr.github.io/adcomp/group__R__style__distribution.html
