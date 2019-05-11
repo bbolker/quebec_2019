@@ -1,0 +1,146 @@
+---
+title: "Likelihood intro/reminder"
+author: Ben Bolker (some material from Steve Ellner)
+date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+```{r pkgs, echo=FALSE,message=FALSE}
+library(bbmle)
+library(emdbook)
+library(ellipse)
+```
+
+# Likelihood
+
+## Definition
+
+- probability of data given a model (structure & parameters)
+- in R: `d*` functions (base, [Distributions Task View](https://cran.r-project.org/web/views/Distributions.html))
+
+## MLEs are consistent and asymptotically Normal
+
+- *consistent* = converge to the true values as the number of independent observations becomes infinite
+- asymptotic Normality is the basis for the approximate (Wald) standard errors from `summary()`
+
+## MLEs are asymptotically efficient
+
+- Important but a bit delicate. 
+- As number of independent observations $n$ increases, the standard errors on each parameter decrease in proportion to $C/\sqrt{n}$ for some constant $C$
+- **Asymptotically efficient** means that there is no unbiased way of estimating parameters for which the standard errors shrink at a strictly faster rate (e.g., a smaller value of $C$, or a higher power of $n$ in the denominator). 
+
+## MLEs = Swiss Army knife
+
+- MLEs make sense
+- Lots of justifying theory
+- When it can do the job, it's rarely the best tool for the job but it's rarely much worse than the best (at least for large samples)
+
+## Likelihood inference
+
+- Wald inference: 
+
+
+```{r gourd_def, cache=TRUE,echo=FALSE,message=FALSE}
+library(bbmle)
+library(emdbook)
+gourd <- function(x,y,s1=0,s2=3,a=1,s1exp=1,rot=FALSE,theta=pi/4){
+  if (rot) {
+    newx <- cos(theta)*x+sin(theta)*y
+    newy <- -sin(theta)*x+cos(theta)*y
+    x<-newx
+    y<-newy
+  }
+  a*((exp(s1+s1exp*y)*x)^2+(s2*y)^2)
+} 
+fun1 <- function(x,y) gourd(x,y,s1exp=0,a=0.5)
+fun2 <- function(x,y) gourd(x,y,s1exp=0,a=0.5,rot=TRUE)
+fun3 <- function(x,y) gourd(x,y,s1exp=2,a=1)
+fun4 <- function(x,y) gourd(x,y,s1exp=2,a=1.2,rot=TRUE)
+c1 <- curve3d(fun1,from=c(-3,-2),to=c(3,2),
+          sys3d="none")
+c2 <- curve3d(fun2,from=c(-3,-2),to=c(3,2),
+          sys3d="none")
+c3 <- curve3d(fun3,from=c(-3,-2),to=c(3,2),
+          sys3d="none",n=c(71,71))
+c4 <- curve3d(fun4,from=c(-3,-2),to=c(3,2),
+          sys3d="none",n=c(91,91))
+tmpf <- function(fun0,c0,heights=c(-2.3,-1.7,-2),
+                 xpos = 2.35,
+                 quadlty=1,quadcol="darkgray",
+                 legend=FALSE) {
+  ## 2D (univariate) confidence region
+  contour(c0$x,c0$y,c0$z,
+          levels=qchisq(0.95,1)/2,
+          drawlabels=FALSE,axes=FALSE,
+          xlab="",ylab="",
+          xlim=c(-3,3.4),
+          ylim=c(-2.4,1.8))
+  box(col="gray")
+  m <- mle2(fun0,start=list(x=0,y=0))
+  p <- profile(m)
+  s <- sliceOld(m)
+  sliceconf.x = approx(s$profile$x$z,
+    s$profile$x$par.vals[,"x"],
+    xout = qnorm(c(0.025,0.975)))$y
+  profconf.x = confint(p)["x",]
+  profconf.y = approx(p@profile$x$z,
+    y=p@profile$x$par.vals[,"y"],
+    xout = qnorm(c(0.025,0.975)))$y
+  ellconf.x = confint(m,method="quad")["x",]
+  v = vcov(m)
+  slope = v[1,2]/v[1,1]
+  ellconf.y = ellconf.x*slope
+  lines(ellipse(vcov(m),centre=coef(m),
+                t=sqrt(qchisq(0.95,1))),lty=quadlty,
+        col=quadcol)
+  ## redraw
+  contour(c0$x,c0$y,c0$z,
+          levels=qchisq(0.95,1)/2,
+          drawlabels=FALSE,add=TRUE)
+  lines(p@profile$x$par.vals[,"x"],p@profile$x$par.vals[,"y"],lty=2)
+  abline(a=0,b=slope)
+  points(ellconf.x,ellconf.y,pch=2)
+  points(profconf.x,profconf.y,pch=5)
+  points(sliceconf.x,rep(0,2),pch=8)
+  points(ellconf.x,rep(heights[1],2),pch=2)
+  segments(ellconf.x[1],heights[1],ellconf.x[2],heights[1],pch=2)
+  points(profconf.x,rep(heights[2],2),pch=5)
+  segments(profconf.x[1],heights[2],profconf.x[2],heights[2])
+  points(sliceconf.x,rep(heights[3],2),pch=8)
+  segments(sliceconf.x[1],heights[3],sliceconf.x[2],heights[3])
+  text(rep(xpos,3),heights,c("quad","profile","slice"),cex=0.75,adj=0)
+  if (legend) {
+    legend("topleft",
+           c("conf. region",
+             "quadratic",
+             "profile"),
+           lwd=2,
+           lty=c(1,quadlty,2),
+           col=c(1,quadcol,1),
+           bty="n",cex=0.75)
+  }
+}
+```
+
+```{r gourd_draw,echo=FALSE}
+op <- par(mfrow=c(2,2),lwd=2,bty="l",las=1,cex=1.5,
+       mar=c(0,0,0,0))
+tmpf(fun1,c1)
+tmpf(fun2,c2)
+tmpf(fun3,c3,legend=TRUE)
+tmpf(fun4,c4)
+par(op)
+```
+
+# Inference
+
+## Wald 
+
+## likelihood-based
+
+## bootstrapping
+

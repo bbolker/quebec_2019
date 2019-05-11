@@ -1,0 +1,54 @@
+---
+title: Nonlinear optimization
+author: Ben Bolker
+date: "`r format(Sys.time(), '%d %B %Y')`"
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+# Local optimization
+
+## General issues
+
+- uses first (gradient/direction) and second (Hessian/curvature) information
+- assumes smooth objective function
+- R's optimization functions **don't insist on user-supplied gradient functions** - but will use finite differences instead
+
+## Methods
+
+- my favorite reference is @Press+1994 (or later editions)
+- *gradient descent*: widely used in machine learning
+    - easy, scalable
+	- but can almost certainly do better!
+- *Newton's method*: simple but not actually practical (unstable, expensive)	
+- Levenberg-Marquardt: specifically for least squares problems	
+- conjugate gradients (CG), quasi-Newton (`BFGS`, `L-BFGS-B`)
+    - various fancier methods
+
+## Non-derivative-based
+
+- Nelder-Mead
+- BOBYQA, COBYLA, NEWUOA (Powell) ...
+
+## Stochastic/global optimization
+
+
+## general
+
+## simulated annealing
+
+## genetic algorithms
+
+- population-based
+- biological analogies
+- reproduction, selection, mutation, recombination ("crossover")
+- flexible
+- parameters often coded as bit strings
+
+## differential evolution
+
+- population-based
+  - 

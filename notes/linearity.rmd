@@ -1,0 +1,68 @@
+---
+title: Linearity
+author: Ben Bolker
+date: "`r format(Sys.time(), '%d %B %Y')`"
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+## What is a "nonlinear" model?
+
+- a model whose objective function (usu. likelihood) *cannot* be expressed as a linear function of predictors ($\beta_0 + \beta_1 x_1 + \beta_2 x_2$ ...)
+
+## What's so good about linear models?
+
+- solution by linear algebra, rather than iteration
+- *generalized* linear models - *iterative* linear algebra (IRLS: @kane_glms_2016, @arnold_computational_2019)
+- guarantees:
+     - performance
+	 - convergence
+	 - unimodal, *log-quadratic* likelihoods
+- no hyperparameter tuning
+- no tests for convergence
+- no need to pick starting values
+- robust to parameter scaling and correlation
+- interpretability
+- convenient framework for covariates/interactions/etc.
+
+## what does "linear" include?
+
+- additive models (splines for general smooth continuous functions)
+- linearization tricks (e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$)
+- borderline:
+    - generalized least squares
+    - generalized linear models
+    - (G)L mixed models
+
+## Nonlinear models
+
+- everything else 
+
+> "nonlinear" $\leftrightarrow$ most zoology = the study of non-elephant animals (Ulam)
+- most methods use *locally* linear approaches (gradient descent; Newton)
+- today's class will focus on less-canned/one-off solutions
+- special cases not covered:
+     - expectation-maximization algorithm (mixtures/latent variables)
+	 - Laplace approximation (Gaussian latent variables)
+
+## Special-case toolboxes
+
+Common classes of problems have special algorithms that linearize or otherwise solve most of the problem
+
+- simplify problem expression
+- use most efficient algorithms
+- choose sensible starting values (e.g. $\beta=0$ for linear-like models)
+- or use heuristic *self-starting* algorithms to find starting values  
+`apropos("^SS[a-z]",ignore.case=FALSE)`
+
+## Special-case examples
+
+- Kalman filtering
+- hidden Markov models (Viterbi algorithm)
+- generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
+- generalized least-squares
+
+
