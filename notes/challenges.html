@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Fitting challenges</h1>
 <h4 class="author">Ben Bolker</h4>
-<h4 class="date">17:08 11 May 2019</h4>
+<h4 class="date">20:33 11 May 2019</h4>
 
 </div>
 
@@ -208,7 +208,11 @@ $(document).ready(function () {
 <div id="slowness" class="section level2">
 <h2>slowness</h2>
 <ul>
-<li>Noam Ross</li>
+<li><span class="citation">(Ross 2013)</span>(<a href="http://www.noamross.net/blog/2013/4/25/faster-talk.html" class="uri">http://www.noamross.net/blog/2013/4/25/faster-talk.html</a>):
+<ul>
+<li>rewrite in C++</li>
+<li>parallelize (hard in this case)</li>
+</ul></li>
 </ul>
 </div>
 <div id="discontinuities-and-thresholds" class="section level2">
@@ -221,17 +225,38 @@ $(document).ready(function () {
 <div id="multi-modality" class="section level2">
 <h2>multi-modality</h2>
 <ul>
+<li>can be very hard to tell (Simon Wood examples)</li>
 <li>check convergence</li>
 <li>KKT criteria, locally</li>
-<li>multi-start algorithms</li>
+<li>multi-start algorithms
+<ul>
+<li>random</li>
+<li>Latin hypercube</li>
+<li>Sobol sequences</li>
+</ul></li>
+<li>cumulative distribution of neg log likelihoods <span class="citation">(Raue et al. 2013)</span></li>
 <li>stochastic global optimization</li>
 </ul>
 </div>
-<div id="section" class="section level2">
-<h2></h2>
+<div id="constraints-box" class="section level2">
+<h2>constraints (box)</h2>
+<ul>
+<li>independent inequality constraints</li>
+<li>built into some optimizers (<code>optim/L-BFGS-B</code>, <code>nloptr</code> tools)</li>
+<li>transformations
+<ul>
+<li>convenient; can also improve Wald approximation, improve scaling</li>
+<li>bad if parameter is actually <em>on</em> the boundary</li>
+</ul></li>
+</ul>
+<div id="refs" class="references">
+<div id="ref-raue_lessons_2013">
+<p>Raue, Andreas, Marcel Schilling, Julie Bachmann, Andrew Matteson, Max Schelke, Daniel Kaschek, Sabine Hug, et al. 2013. “Lessons Learned from Quantitative Dynamical Modeling in Systems Biology.” <em>PLOS ONE</em> 8 (9): e74335. doi:<a href="https://doi.org/10.1371/journal.pone.0074335">10.1371/journal.pone.0074335</a>.</p>
 </div>
-<div id="constraints" class="section level2">
-<h2>constraints</h2>
+<div id="ref-ross_faster_2013">
+<p>Ross, Noam. 2013. “FasteR! HigheR! StrongeR! - A Guide to Speeding Up R Code for Busy People.” <em>Noam Ross</em>. <a href="http://www.noamross.net/blog/2013/4/25/faster-talk.html" class="uri">http://www.noamross.net/blog/2013/4/25/faster-talk.html</a>.</p>
+</div>
+</div>
 </div>
 
 

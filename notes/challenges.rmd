@@ -2,6 +2,7 @@
 title: "Fitting challenges"
 author: Ben Bolker
 date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+bibliography: ../nonlin.bib
 ---
 
 ![cc](pix/cc-attrib-nc.png)
@@ -17,7 +18,10 @@ Please share \& remix noncommercially, mentioning its origin.
 
 ## slowness
 
-- Noam Ross
+- [@ross_faster_2013](http://www.noamross.net/blog/2013/4/25/faster-talk.html):
+      - rewrite in C++
+      - parallelize (hard in this case)
+
 
 ## discontinuities and thresholds
 
@@ -26,12 +30,21 @@ Please share \& remix noncommercially, mentioning its origin.
 
 ## multi-modality
 
+- can be very hard to tell (Simon Wood examples)
 - check convergence
 - KKT criteria, locally
 - multi-start algorithms
+     - random
+	 - Latin hypercube
+	 - Sobol sequences
+- cumulative distribution of neg log likelihoods [@raue_lessons_2013]
 - stochastic global optimization
 
-## 
+## constraints (box)
 
-## constraints
+- independent inequality constraints
+- built into some optimizers (`optim/L-BFGS-B`, `nloptr` tools)
+- transformations 
+     - convenient; can also improve Wald approximation, improve scaling
+     - bad if parameter is actually *on* the boundary
 

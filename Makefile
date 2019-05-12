@@ -1,6 +1,6 @@
 SRCDIR=..
 
-notes += intro linearity likelihood optimization challenges
+notes += intro linearity likelihood optimization challenges simple
 
 nnhtml := $(notes:%=notes/%.html)
 nnrmd := $(notes:%=notes/%.rmd)

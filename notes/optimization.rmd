@@ -2,6 +2,7 @@
 title: Nonlinear optimization
 author: Ben Bolker
 date: "`r format(Sys.time(), '%d %B %Y')`"
+bibliography: ../nonlin.bib
 ---
 
 ![cc](pix/cc-attrib-nc.png)
@@ -9,17 +10,35 @@ Licensed under the
 [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
 Please share \& remix noncommercially, mentioning its origin.
 
+# Optimization
+
+## no free lunch
+
+- [Wikipedia](https://en.wikipedia.org/wiki/No_free_lunch_in_search_and_optimization)
+- > "any two algorithms are equivalent when their performance is averaged across all possible problems."
+- a "good" optimization method is one that works on the kinds of problems you have
+
+## implementations
+
+**the devil is in the details**; different implementations *of the same algorithm* may differ ...
+
+- performance
+- robustness
+- interface (arguments, return values)
+- controls
+- convergence testing
+
 # Local optimization
 
-## General issues
+## derivative-based optimization
 
 - uses first (gradient/direction) and second (Hessian/curvature) information
 - assumes smooth objective function
 - R's optimization functions **don't insist on user-supplied gradient functions** - but will use finite differences instead
 
-## Methods
+## derivative-based methods
 
-- my favorite reference is @Press+1994 (or later editions)
+- see @Press+1994 (or later editions)
 - *gradient descent*: widely used in machine learning
     - easy, scalable
 	- but can almost certainly do better!
@@ -28,17 +47,31 @@ Please share \& remix noncommercially, mentioning its origin.
 - conjugate gradients (CG), quasi-Newton (`BFGS`, `L-BFGS-B`)
     - various fancier methods
 
-## Non-derivative-based
+## derivative-free methods
 
+- for non-smooth surfaces, or when derivatives are expensive
 - Nelder-Mead
 - BOBYQA, COBYLA, NEWUOA (Powell) ...
 
-## Stochastic/global optimization
+# Stochastic/global optimization
 
+## stochastic optimization
 
-## general
+- for noisy surfaces, multi-modal problems ...
+- see [CRAN optimization task view section](https://cran.r-project.org/web/views/Optimization.html#global-and-stochastic-optimization)
+- classic method is *simulated annealing* (`method="SANN"` 
+- **slow** and need lots of tuning
 
 ## simulated annealing
+
+- local search with decreasing noise
+- local "jumps" according to some *candidate distribution*
+- accept with probability $\exp(-\Delta G/T)$
+    - high temperature: random search
+	- low temperature: local ratchet
+- tuning: candidate distribution, cooling schedule
+- very general (don't need continuous parameters)
+- compare Metropolis-Hastings in Markov chain Monte Carlo
 
 ## genetic algorithms
 
@@ -51,4 +84,4 @@ Please share \& remix noncommercially, mentioning its origin.
 ## differential evolution
 
 - population-based
-  - 
+
