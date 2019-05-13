@@ -1,0 +1,131 @@
+---
+title: "Tools for derivatives etc."
+author: Ben Bolker
+date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+bibliography: ../nonlin.bib
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+```{r pkgs,message=FALSE}
+library(rstan)
+library(Deriv)
+library(TMB)
+```
+
+## calculating derivatives
+
+- by hand (ugh)
+- `deriv(..., function.args=...)`
+     - returns 
+	 
+```{r}
+(f1 <- deriv(~ 1/(a+b*exp(-x)), c("a","b"),
+             function.arg=c("a","b","x")))
+f1_g <- function(a,b,x) {
+  attr(f1(a,b,x),"grad")
+}
+```
+(wasteful but I don't know of a better pattern)
+
+The `Deriv` package is much more flexible than the built-in `deriv()` function: allows user-specified rules
+
+```{r}
+log_dpois_symb <- ~ x*log(lambda)-lambda/lfactorial(x)
+## deriv(log_dpois_symb,"lambda")
+library("Deriv")
+drule[["dpois"]] <- alist(lambda=x/lambda - 1/lfactorial(x),
+                          x=log(lambda)-lambda*-digamma(x+1)/lfactorial(x)^2)
+Deriv(~dpois(y,1/(1+exp(a+b*x))),c("a","b"))
+```
+
+## automatic differentiation
+
+- "magic" algorithm ([Wikipedia](https://en.wikipedia.org/wiki/Automatic_differentiation)) [@griewank_automatic_1989; @griewank_achieving_1992]
+- computing objective function and **all** derivatives for not much more than just the objective function cost
+- automated version of the chain rule
+
+```{r}
+deriv(~x^2+y^2, c("x","y"))
+```
+
+## Laplace approximation
+
+# TMB
+
+```{r}
+writeLines(con="tadpole1.cpp",
+           "// Tadpole example
+#include <TMB.hpp>
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  DATA_VECTOR(Initial);
+  DATA_VECTOR(Killed);
+  PARAMETER(a);
+  PARAMETER(h);
+  Type nll = 0;
+  for (int i=0; i < Killed.size(); i++) {
+      nll -= dbinom(Killed(i), Initial(i), a/(1+a*h*Initial(i)), true);
+  }
+  return nll;
+}
+")
+library(emdbook)
+data(ReedfrogFuncresp)
+```
+
+```{r compile,cache=TRUE}
+compile("tadpole1.cpp")
+```
+
+```{r}
+dyn.load(dynlib("tadpole1"))
+obj <- MakeADFun(as.list(ReedfrogFuncresp),
+                 list(a=1, h=1),
+                 DLL="tadpole1",
+                 silent=TRUE)
+obj$fn(a=1,h=1)
+obj$gr(a=1,h=1)
+res <- do.call("optim",obj)
+```
+
+## Stan
+
+Stan [function reference](https://mc-stan.org/docs/2_18/functions-reference/)
+```{r stanmodel,echo=FALSE}
+cat(readLines("tadpole.stan"))
+```
+```{r}
+library(rstan)
+m <- stan_model(file = "tadpole.stan", model_name = "tadpole")
+fit <- optimizing(m, data = c(as.list(ReedfrogFuncresp),
+                              N= nrow(ReedfrogFuncresp)))
+```
+            
+## NIMBLE
+
+```{r nimble}
+## load the NIMBLE library
+library(nimble)
+
+## define the model
+code <- nimbleCode({
+    a ~ dnorm(0, sd = 10000)
+    h ~ dnorm(0, sd = 10000)
+    for(i in 1:N) {
+        p[i] <- a/(1+a*h*Initial[i])
+        Killed[i] ~ dbin(p[i], Initial[i])
+    }
+})
+constants <- list(N = 10)
+data <- as.list(ReedfrogFuncresp)
+```
+
+## greta
+
+## INLA
+

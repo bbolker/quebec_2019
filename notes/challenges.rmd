@@ -47,4 +47,13 @@ Please share \& remix noncommercially, mentioning its origin.
 - transformations 
      - convenient; can also improve Wald approximation, improve scaling
      - bad if parameter is actually *on* the boundary
+- e.g. negative binomial parameter: var=$\mu(1+\mu/k)$.  Often use $\log(k)$ to keep it positive, but what if equi/underdispersed?  Use $1/k$ with lower bound at 0?
 
+# troubleshooting
+
+## parameterization
+
+- mathematically pretty: $ax/(1+bx)$
+- simpler units: $ax/(1+x/c)$
+- traditional: $ax/(1+ahx)$
+- separate features: $ax/(1+(a/d)x)$, $d>0$

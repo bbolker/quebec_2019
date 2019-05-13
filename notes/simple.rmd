@@ -24,7 +24,11 @@ Please share \& remix noncommercially, mentioning its origin.
 *either* 
 
 - objective function as explicit function of parameter vector `p`
+     - explicit
+	 - arbitrarily complex
 - *or* use `bbmle::mle2` formula interface
+     - simpler, readable
+	 - allows use of `predict()`, `simulate()`, `residuals()` ...
 
 
 # tadpoles (functional response)

@@ -1,5 +1,5 @@
 ---
-title: Linearity
+title: (Non)linearity
 author: Ben Bolker
 date: "`r format(Sys.time(), '%d %B %Y')`"
 ---
@@ -31,10 +31,12 @@ Please share \& remix noncommercially, mentioning its origin.
 ## what does "linear" include?
 
 - additive models (splines for general smooth continuous functions)
-- linearization tricks (e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$)
+- linearization tricks 
+     - e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$
+	 - Michaelis-Menten: $y = ax/(b+x) \to 1/y = (b/a) (1/x) + (1/a)$
 - borderline:
     - generalized least squares
-    - generalized linear models
+    - generalized linear models (link function)
     - (G)L mixed models
 
 ## Nonlinear models
@@ -48,9 +50,29 @@ Please share \& remix noncommercially, mentioning its origin.
      - expectation-maximization algorithm (mixtures/latent variables)
 	 - Laplace approximation (Gaussian latent variables)
 
+## Simple examples
+
+- power-law curves (if additive: $y=ax^b$ can be linearized)
+- logistic curves, unknown asymptote ($K$, or prob <1), and generalizations (e.g. Richards equation)
+- simple movement models (log-Normal step length/von Mises turning angle)
+- saturating curves (functional responses: Holling/Rogers equation)
+
+## Harder examples
+
+- trajectory-matching ODEs
+- seed shadow models
+- mixture models
+
 ## Special-case toolboxes
 
 Common classes of problems have special algorithms that linearize or otherwise solve most of the problem
+
+- Kalman filtering
+- hidden Markov models (Viterbi algorithm)
+- generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
+- generalized least-squares
+
+## General advice
 
 - simplify problem expression
 - use most efficient algorithms
@@ -58,11 +80,7 @@ Common classes of problems have special algorithms that linearize or otherwise s
 - or use heuristic *self-starting* algorithms to find starting values  
 `apropos("^SS[a-z]",ignore.case=FALSE)`
 
-## Special-case examples
 
-- Kalman filtering
-- hidden Markov models (Viterbi algorithm)
-- generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
-- generalized least-squares
+
 
 

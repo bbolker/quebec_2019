@@ -1,6 +1,6 @@
 SRCDIR=..
 
-notes += intro linearity likelihood optimization challenges simple
+notes += intro linearity likelihood optimization challenges simple latent toolboxes
 
 nnhtml := $(notes:%=notes/%.html)
 nnrmd := $(notes:%=notes/%.rmd)

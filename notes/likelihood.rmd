@@ -39,10 +39,23 @@ library(ellipse)
 - Lots of justifying theory
 - When it can do the job, it's rarely the best tool for the job but it's rarely much worse than the best (at least for large samples)
 
-## Likelihood inference
+## Inference
 
-- Wald inference: 
+- **Wald approximation**: quadratic approximation (parabolas/ellipses)
+      - p-values: $Z$-scores ($\hat \beta/\sigma_{\hat \beta}$ \sim N(0,1)$)
+	  - confidence intervals: based on $N(\hat \beta, \sigma_{\hat \beta})$
+	  - strongly asymptotic
+- **likelihood**:
+      - p-values: likelihood ratio test ($-2 \Delta \log L \sim \chi^2_n$)
+	  - CIs: *likelihood profiles*
+- **bootstrapping**
+      - nonparametric (slow, requires independence)
+	  - parametric (slow, model-dependent)
+- **Bayesian**
 
+Beyond Normal errors, finite-size corrections are tricky
+
+## ...
 
 ```{r gourd_def, cache=TRUE,echo=FALSE,message=FALSE}
 library(bbmle)
@@ -135,12 +148,4 @@ tmpf(fun3,c3,legend=TRUE)
 tmpf(fun4,c4)
 par(op)
 ```
-
-# Inference
-
-## Wald 
-
-## likelihood-based
-
-## bootstrapping
 

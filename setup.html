@@ -231,8 +231,25 @@ if (length(to_install)&gt;0) {
 <li>Linux: make sure you have <code>gcc</code>/<code>g++</code> installed</li>
 </ul>
 <p>Also see <a href="https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started">Checking the C++ toolchain</a> from the Stan installation instructions. (Run <code>pkgbuild::has_build_tools(debug=TRUE)</code>.)</p>
+<div id="tmb-test" class="section level2">
+<h2>TMB test</h2>
+<p>Please check that the following code runs without an error on your system: if it doesn’t, please send me an e-mail (<code>bbolker at gmail.com</code>) with the error message pasted in to the body of the message.</p>
+<pre class="r"><code>library(TMB)
+writeLines(con=&quot;test.cpp&quot;,
+&quot;#include &lt;TMB.hpp&gt;
+template&lt;class Type&gt;
+Type objective_function&lt;Type&gt;::operator() ()
+{
+  DATA_VECTOR(y);
+  PARAMETER(mu);
+  Type nll = -sum(dnorm(y, mu, 1, true));
+  return nll;
+}
+&quot;)
+compile(&quot;test.cpp&quot;)</code></pre>
 <hr />
-<p>Last updated: 2019-05-11 20:32:19</p>
+<p>Last updated: 2019-05-13 18:42:11</p>
+</div>
 
 
 
