@@ -2,6 +2,7 @@
 - https://cran.r-project.org/web/views/Optimization.html#least-squares-problems
 - nimble, Stan (as optimizer), brms (for nonlin problems)
 
+- parameterization (logistic etc.)
 - reasons for nonlinear models
     - specific functions in mind
 	     - functional responses

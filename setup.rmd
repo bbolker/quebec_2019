@@ -11,9 +11,9 @@ Note that this list deliberately takes an [everything-but-the-kitchen-sink](http
 
 ```{r pkg1,eval=FALSE}
 ## modeling packages
-mod_pkgs <- c("alabama", "bbmle", "brms", "DEoptim", "Deriv", "dfoptim", 
-              "maxLik", "minpack.lm", "minqa", "nimble", "nloptr",
-              "nls2", "nlshelper", "nlstools", "nls.multstart",
+mod_pkgs <- c("alabama", "bbmle", "brms", "DEoptim", "Deriv", "dfoptim",
+              "glmmTMB", "lme4", "maxLik", "minpack.lm", "minqa", "nimble",
+              "nloptr", "nls2", "nlshelper", "nlstools", "nls.multstart",
               "numDeriv", "optimx", "RcppNumerical",
               "repeated", "subplex", "TMB")
 

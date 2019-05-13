@@ -1,0 +1,70 @@
+---
+title: Simple nonlinear examples
+author: Ben Bolker
+date: "`r format(Sys.time(), '%d %B %Y')`"
+bibliography: ../nonlin.bib
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+# Basics
+
+## outline
+
+- explore data (plot)
+- define objective function (neg log likelihood)
+- decide on starting values
+- choose optimization function (`optim()` etc.)
+
+## Set up objective function
+
+*either* 
+
+- objective function as explicit function of parameter vector `p`
+- *or* use `bbmle::mle2` formula interface
+
+
+# tadpoles (functional response)
+
+From @VoneshBolker2005.
+
+Suggested models:
+
+```{r}
+frogs <- emdbook::ReedfrogFuncresp
+## predicted number killed with two different 
+rogers_pred <- function(N0, a, h, P, T) {
+  N0 - emdbook::lambertW(a * h * N0 * exp(-a * (P * T - h * N0)))/(a * h)
+}
+holling_pred <- function(N0, a, h, P, T) {
+  a*N0*P*T/(1+a*h*N0)
+}
+T <- 14 ## time period
+P <- 3  ## number of predators
+```
+
+- initial slope=$aPT$ ($a$ = predation rate per predator per unit time)
+- asymptote = $PT/h$
+
+# caterpillar virus
+
+From @reilly_density-dependent_2008, a tiny data set:
+
+```{r}
+dd <- read.table(header=TRUE,
+           text="
+density larvae surviving
+1   90  60
+5   90  60
+10  89  56
+15  87  41
+20  93  31
+")
+```
+
+Suggested model: $S \sim \textrm{Binom}(p=\beta_0 + \beta_1 D^\beta_2$, N)$
+
+## references
