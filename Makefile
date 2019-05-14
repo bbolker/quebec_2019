@@ -1,6 +1,6 @@
 SRCDIR=..
 
-notes += intro linearity likelihood optimization challenges simple latent toolboxes
+notes += intro linearity likelihood optimization challenges simple latent toolboxes latent_ex
 
 nnhtml := $(notes:%=notes/%.html)
 nnrmd := $(notes:%=notes/%.rmd)
@@ -29,7 +29,7 @@ R/%.R:  ${SRCDIR}/R/%.R
 %.pdf: ${SRCDIR}/%.rmd
 	echo "rmarkdown::render(\"$<\",output_dir='.',output_format=\"pdf_document\")" | R --slave
 
-notes/challenges.html: ${SRCDIR}/notes/challenges.rmd
+notes/challenges.html: ${SRCDIR}/notes/challenges.rmd 
 	R CMD BATCH ${SRCDIR}/notes/vonesh_slice.R
 	echo "rmarkdown::render(\"$<\",output_format='html_document',output_dir='notes')" | R --slave
 
