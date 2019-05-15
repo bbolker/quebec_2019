@@ -43,12 +43,9 @@ Please share \& remix noncommercially, mentioning its origin.
 
 - everything else 
 
-> "nonlinear" $\leftrightarrow$ most zoology = the study of non-elephant animals (Ulam)
-- most methods use *locally* linear approaches (gradient descent; Newton)
-- today's class will focus on less-canned/one-off solutions
-- special cases not covered:
-     - expectation-maximization algorithm (mixtures/latent variables)
-	 - Laplace approximation (Gaussian latent variables)
+- "nonlinear" $\leftrightarrow$ most zoology = the study of non-elephant animals (Ulam)
+- many methods use *locally* linear approaches (gradient descent; Newton)
+- today's class focuses on less-canned/one-off solutions
 
 ## Simple examples
 
@@ -71,6 +68,7 @@ Common classes of problems have special algorithms that linearize or otherwise s
 - hidden Markov models (Viterbi algorithm)
 - generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
 - generalized least-squares
+- mixture models via expectation-maximization
 
 ## General advice
 

@@ -11,6 +11,7 @@
 
 <meta name="author" content="Ben Bolker (some material from Steve Ellner)" />
 
+<meta name="date" content="2019-05-14" />
 
 <title>Likelihood intro/reminder</title>
 
@@ -191,7 +192,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Likelihood intro/reminder</h1>
 <h4 class="author">Ben Bolker (some material from Steve Ellner)</h4>
-<h4 class="date">12:19 13 May 2019</h4>
+<h4 class="date">14 May 2019</h4>
 
 </div>
 
@@ -203,21 +204,25 @@ $(document).ready(function () {
 <h2>Definition</h2>
 <ul>
 <li>probability of data given a model (structure &amp; parameters)</li>
-<li>in R: <code>d*</code> functions (base, <a href="https://cran.r-project.org/web/views/Distributions.html">Distributions Task View</a>)</li>
+<li>in R: distributions via <code>d*</code> functions (base, <a href="https://cran.r-project.org/web/views/Distributions.html">Distributions Task View</a>)</li>
+<li>usually: complex model for the <em>location</em>, simpler models for the <em>scale</em> and <em>shape</em>
+<ul>
+<li>e.g. Gamma with fixed shape, varying mean</li>
+</ul></li>
 </ul>
 </div>
 <div id="mles-are-consistent-and-asymptotically-normal" class="section level2">
 <h2>MLEs are consistent and asymptotically Normal</h2>
 <ul>
-<li><em>consistent</em> = converge to the true values as the number of independent observations becomes infinite</li>
+<li><em>consistent</em> = converge to the true values as the number of independent observations grows to infinity</li>
 <li>asymptotic Normality is the basis for the approximate (Wald) standard errors from <code>summary()</code></li>
 </ul>
 </div>
 <div id="mles-are-asymptotically-efficient" class="section level2">
 <h2>MLEs are asymptotically efficient</h2>
 <ul>
-<li>Important but a bit delicate.</li>
-<li>As number of independent observations <span class="math inline">\(n\)</span> increases, the standard errors on each parameter decrease in proportion to <span class="math inline">\(C/\sqrt{n}\)</span> for some constant <span class="math inline">\(C\)</span></li>
+<li>important but a bit delicate.</li>
+<li>as number of independent observations <span class="math inline">\(n\)</span> increases, the standard errors on each parameter decrease in proportion to <span class="math inline">\(C/\sqrt{n}\)</span> for some constant <span class="math inline">\(C\)</span></li>
 <li><strong>Asymptotically efficient</strong> means that there is no unbiased way of estimating parameters for which the standard errors shrink at a strictly faster rate (e.g., a smaller value of <span class="math inline">\(C\)</span>, or a higher power of <span class="math inline">\(n\)</span> in the denominator).</li>
 </ul>
 </div>
@@ -225,8 +230,9 @@ $(document).ready(function () {
 <h2>MLEs = Swiss Army knife</h2>
 <ul>
 <li>MLEs make sense</li>
-<li>Lots of justifying theory</li>
-<li>When it can do the job, it’s rarely the best tool for the job but it’s rarely much worse than the best (at least for large samples)</li>
+<li>lots of justifying theory</li>
+<li>when it can do the job, it’s rarely the best tool for the job but it’s rarely much worse than the best (at least for large samples)</li>
+<li>most statistical models (least-squares, GLMs) are special cases of MLE</li>
 </ul>
 </div>
 <div id="inference" class="section level2">
@@ -248,7 +254,13 @@ $(document).ready(function () {
 <li>nonparametric (slow, requires independence)</li>
 <li>parametric (slow, model-dependent)</li>
 </ul></li>
-<li><strong>Bayesian</strong></li>
+<li><strong>Bayesian</strong>
+<ul>
+<li>requires priors</li>
+<li>strongly model-dependent</li>
+<li>often slow</li>
+<li>… but solves many problems</li>
+</ul></li>
 </ul>
 <p>Beyond Normal errors, finite-size corrections are tricky</p>
 </div>

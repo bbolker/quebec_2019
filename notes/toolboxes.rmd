@@ -1,5 +1,5 @@
 ---
-title: "Tools for derivatives etc."
+title: "Advanced toolboxes for nonlinear optimization"
 author: Ben Bolker
 date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
 bibliography: ../nonlin.bib
@@ -14,6 +14,7 @@ Please share \& remix noncommercially, mentioning its origin.
 library(rstan)
 library(Deriv)
 library(TMB)
+library(emdbook)
 ```
 
 ## calculating derivatives
@@ -54,7 +55,10 @@ deriv(~x^2+y^2, c("x","y"))
 
 ## Laplace approximation
 
-# TMB
+- built into TMB
+- also INLA
+
+# Tadpoles in TMB
 
 ```{r}
 writeLines(con="tadpole1.cpp",
@@ -74,8 +78,6 @@ Type objective_function<Type>::operator() ()
   return nll;
 }
 ")
-library(emdbook)
-data(ReedfrogFuncresp)
 ```
 
 ```{r compile,cache=TRUE}
@@ -84,10 +86,12 @@ compile("tadpole1.cpp")
 
 ```{r}
 dyn.load(dynlib("tadpole1"))
+data(ReedfrogFuncresp)
 obj <- MakeADFun(as.list(ReedfrogFuncresp),
                  list(a=1, h=1),
                  DLL="tadpole1",
                  silent=TRUE)
+## try out function and gradient
 obj$fn(a=1,h=1)
 obj$gr(a=1,h=1)
 res <- do.call("optim",obj)
@@ -96,36 +100,36 @@ res <- do.call("optim",obj)
 ## Stan
 
 Stan [function reference](https://mc-stan.org/docs/2_18/functions-reference/)
-```{r stanmodel,echo=FALSE}
+```{r show_stanmodel,echo=FALSE}
 cat(readLines("tadpole.stan"))
 ```
-```{r}
-library(rstan)
+```{r build_stan,cache=TRUE}
 m <- stan_model(file = "tadpole.stan", model_name = "tadpole")
+```
+
+```{r fit_stan}
 fit <- optimizing(m, data = c(as.list(ReedfrogFuncresp),
                               N= nrow(ReedfrogFuncresp)))
 ```
-            
+  
 ## NIMBLE
 
-```{r nimble}
-## load the NIMBLE library
+```{r message=FALSE}
 library(nimble)
-
-## define the model
-code <- nimbleCode({
-    a ~ dnorm(0, sd = 10000)
-    h ~ dnorm(0, sd = 10000)
-    for(i in 1:N) {
-        p[i] <- a/(1+a*h*Initial[i])
-        Killed[i] ~ dbin(p[i], Initial[i])
-    }
-})
-constants <- list(N = 10)
-data <- as.list(ReedfrogFuncresp)
+hollingprob <- nimbleFunction(
+ run = function(x = integer(1), x0=integer(1), a = double(), h = double()) {
+   returnType(double())
+   return(-sum(dbinom(x, prob=a/(1+a*h*x0), size=x0, log=TRUE)))
+ })
+with(ReedfrogFuncresp,hollingprob(Killed, Initial, a=0.01,h=1))
+cc <- compileNimble(hollingprob, showCompilerOutput=TRUE)
+with(ReedfrogFuncresp,cc(Killed, Initial, a=0.01,h=1))
 ```
 
-## greta
 
-## INLA
+## other choices
+
+- [greta](https://greta-stats.org/): R -> Tensorflow interface. Hamiltonian Monte Carlo only
+- [NIMBLE](https://r-nimble.org/): modeling language -> MCMC, particle filtering, 
+- [Rcpp](http://www.rcpp.org/): C++ in R; make objective function faster ...
 

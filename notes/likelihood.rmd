@@ -1,7 +1,7 @@
 ---
 title: "Likelihood intro/reminder"
 author: Ben Bolker (some material from Steve Ellner)
-date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+date: "`r format(Sys.time(), '%d %B %Y ')`"
 ---
 
 ![cc](pix/cc-attrib-nc.png)
@@ -20,24 +20,27 @@ library(ellipse)
 ## Definition
 
 - probability of data given a model (structure & parameters)
-- in R: `d*` functions (base, [Distributions Task View](https://cran.r-project.org/web/views/Distributions.html))
+- in R: distributions via `d*` functions (base, [Distributions Task View](https://cran.r-project.org/web/views/Distributions.html))
+- usually: complex model for the *location*, simpler models for the *scale* and *shape*
+     - e.g. Gamma with fixed shape, varying mean
 
 ## MLEs are consistent and asymptotically Normal
 
-- *consistent* = converge to the true values as the number of independent observations becomes infinite
+- *consistent* = converge to the true values as the number of independent observations grows to infinity
 - asymptotic Normality is the basis for the approximate (Wald) standard errors from `summary()`
 
 ## MLEs are asymptotically efficient
 
-- Important but a bit delicate. 
-- As number of independent observations $n$ increases, the standard errors on each parameter decrease in proportion to $C/\sqrt{n}$ for some constant $C$
+- important but a bit delicate. 
+- as number of independent observations $n$ increases, the standard errors on each parameter decrease in proportion to $C/\sqrt{n}$ for some constant $C$
 - **Asymptotically efficient** means that there is no unbiased way of estimating parameters for which the standard errors shrink at a strictly faster rate (e.g., a smaller value of $C$, or a higher power of $n$ in the denominator). 
 
 ## MLEs = Swiss Army knife
 
 - MLEs make sense
-- Lots of justifying theory
-- When it can do the job, it's rarely the best tool for the job but it's rarely much worse than the best (at least for large samples)
+- lots of justifying theory
+- when it can do the job, it's rarely the best tool for the job but it's rarely much worse than the best (at least for large samples)
+- most statistical models (least-squares, GLMs) are special cases of MLE
 
 ## Inference
 
@@ -52,6 +55,10 @@ library(ellipse)
       - nonparametric (slow, requires independence)
 	  - parametric (slow, model-dependent)
 - **Bayesian**
+      - requires priors
+	  - strongly model-dependent
+	  - often slow
+	  - ... but solves many problems
 
 Beyond Normal errors, finite-size corrections are tricky
 

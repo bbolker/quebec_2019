@@ -10,15 +10,30 @@ Licensed under the
 [Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
 Please share \& remix noncommercially, mentioning its origin.
 
+## errors/problems
+
+- bad initial conditions 
+     - predictions outside of feasible range (counts <0, prob outside of (0,1))
+	 - underflow/overflow
+	 - convergence to extreme/flat ranges
+
+**example**?
+
 ## lots of parameters (high dimensionality)
 
 - not really an intrinsic problem
-- visualization is difficult
+- hard to visualize
 - slow
+
+
+## visualization
+
+- slices
+- `expand.grid()` plus ggplot (`geom_tile()` + `facet_grid()` works up to 4D: maybe `ggforce::facet_grid_paginate()` if you're crazy)
 
 ## slowness
 
-- [@ross_faster_2013](http://www.noamross.net/blog/2013/4/25/faster-talk.html):
+- @ross_faster_2013 [link](http://www.noamross.net/blog/2013/4/25/faster-talk.html):
       - rewrite in C++
       - parallelize (hard in this case)
 
@@ -57,3 +72,5 @@ Please share \& remix noncommercially, mentioning its origin.
 - simpler units: $ax/(1+x/c)$
 - traditional: $ax/(1+ahx)$
 - separate features: $ax/(1+(a/d)x)$, $d>0$
+
+## references

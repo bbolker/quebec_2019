@@ -18,6 +18,8 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 - (extended generalized linear mixed models)
 - complex examples/nonlinear mixed models
 
+![](pix/models-glmm.png)
+
 ## tentative schedule
 
 - 0830-1000: review of likelihood/inference, optimization methods, parameterization (from a geometric perspective)

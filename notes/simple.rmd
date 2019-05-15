@@ -29,7 +29,7 @@ Please share \& remix noncommercially, mentioning its origin.
 - *or* use `bbmle::mle2` formula interface
      - simpler, readable
 	 - allows use of `predict()`, `simulate()`, `residuals()` ...
-
+     - don't have standalone prediction/log-likelihood function (except `@minuslogl`)
 
 # tadpoles (functional response)
 
@@ -40,13 +40,13 @@ Suggested models:
 ```{r}
 frogs <- emdbook::ReedfrogFuncresp
 ## predicted number killed with two different 
-rogers_pred <- function(N0, a, h, P, T) {
-  N0 - emdbook::lambertW(a * h * N0 * exp(-a * (P * T - h * N0)))/(a * h)
+rogers_pred <- function(N0, a, h, P, time) {
+  N0 - emdbook::lambertW(a * h * N0 * exp(-a * (P * time - h * N0)))/(a * h)
 }
-holling_pred <- function(N0, a, h, P, T) {
-  a*N0*P*T/(1+a*h*N0)
+holling_pred <- function(N0, a, h, P, time) {
+  a*N0*P*time/(1+a*h*N0)
 }
-T <- 14 ## time period
+time <- 14 ## time period
 P <- 3  ## number of predators
 ```
 
