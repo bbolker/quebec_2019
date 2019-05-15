@@ -1,0 +1,436 @@
+# Algal (non)-linear mixed model example
+
+Version `r as.character(Sys.time())`
+
+```{r knitopts,echo=FALSE}
+knitr::opts_chunk$set(tidy=FALSE)
+```
+## Preliminaries
+
+Inspired by a question from Diego Pujoni [on r-sig-mixed](http://article.gmane.org/gmane.comp.lang.r.lme4.devel/9363/match=), and (a few days later, presumably because there was no response) [on r-help](http://article.gmane.org/gmane.comp.lang.r.general/283733).
+
+The parameters of the problem are that the intercept (0-day value)
+is known to be identical across groups and individuals.
+
+```{r prelims,message=FALSE,warning=FALSE}
+library(nlme)
+library(lme4)
+library(TMB)
+## library(reshape2)
+library(plyr)
+library(ggplot2)
+theme_set(theme_bw())
+library(bbmle) ## for AICtab
+library(splines) ## for profiles
+library(broom.mixed)
+```
+
+Data:
+```{r data}    
+d <- data.frame(Day = rep(c(0,2,4,6,8,10),each=9),
+                Group = rep(c("c","c","c","t1","t1","t1","t2","t2","t2"),6),
+                Individual = factor(rep(1:9,6)),
+                X = c(0.71,0.72,0.71,0.72,0.72,0.72,0.70,0.69,0.70,0.72,0.72,
+                0.71,0.72,0.72,0.71,0.71,0.70,0.71,0.73,0.73,0.69,0.74,
+                0.69,0.73,0.67,0.71,0.69,0.71,0.71,0.72,0.70,0.71,0.70,
+                0.52,0.64,0.60,0.70,0.73,0.73,0.67,0.66,0.71,0.47,0.56,
+                0.54,0.65,0.73,0.73,0.67,0.71,0.58,0.44,0.52,0.58))
+```
+
+Just for the heck of it, plot the data both with `lattice` and with `ggplot2`.
+
+```{r latticeplot,warning=FALSE}
+library(lattice)
+xyplot(jitter(X)~Day, groups=Group, data=d,type=c("a","p"),
+        auto.key=list(space="right"))
+```
+
+`ggplot` version has two small advantages:
+1. Add lines both by
+individual and group average [should be as easy with `stat_summary` as with 
+`type="a"` in `xyplot`, but there is a bug in the latest `ggplot`
+version ...]);
+2. Adjust point size rather than jittering to
+visualize overlapping points.  
+
+(Both of these would of course be possible with a custom `panel.xyplot` ...)
+```{r ggplot}
+## have to aggregate by hand: stat_summary bug
+d2 <- ddply(d,c("Day","Group"),summarise,X=mean(X))
+(g1 <- ggplot(d,aes(x=Day,y=X,colour=Group))+
+    stat_sum(aes(size=factor(..n..)),alpha=0.5)+
+    scale_size_discrete(range=c(2,5),name="npts")+
+    geom_line(aes(group=Individual),alpha=0.5)+
+    geom_line(data=d2,lwd=2,alpha=0.8)+
+    scale_colour_brewer(palette="Dark2"))
+```
+
+The main conclusions from these pictures are that (1) we probably ought
+to be using a nonlinear rather than a linear model; (2) there might be
+some heteroscedasticity (larger variance at lower means, as though there
+is a "ceiling" to the data at $\approx X=0.7$); it does look as though
+there could be among-individual variation (based especially on the `t2`
+data, where the individual curves are approximately parallel). However,
+we'll also try linear fits for illustration (even though they won't be
+very good):
+
+## Using `nlme`
+
+Linear fits with `lme` fail:
+
+```{r lmefit1,error=TRUE}
+LME <- lme(X ~ 1, random = ~Day|Individual, data=d)
+```
+
+If we run this with `control=lmeControl(msVerbose=TRUE)))` we get a lot
+of output, ending with:
+
+```{r eval=FALSE}
+47:    -65.306481:  5.38940 0.705107  179.050
+48:    -65.306489:  5.42212 0.705107  184.783
+49:    -65.306493:  5.45375 0.705106  190.516
+50:    -65.306499:  5.47352 0.705104  194.382
+50:    -65.306499:  5.47352 0.705104  194.382
+```
+
+Unsurprisingly, a more complex
+model allowing for `Group*Day` effects fails too:
+```{r error=TRUE}
+LME1 <- lme(X ~ Group*Day, random = ~Day|Individual, data=d)
+```
+`
+
+I tried to fit a non-linear model using `SSfpl`, a self-starting
+four-parameter logistic model (with parameters left-asymptote,
+right-asymptote, midpoint, scale parameter).  This works fine
+for an `nls` fit, giving reasonable results:
+```{r nlsfit1}
+nlsfit1 <- nls(X ~ SSfpl(Day, asymp.L, asymp.R, xmid, scale),data=d)
+coef(nlsfit1)
+```
+
+Can use `gnls` to fit group-level differences (although for some reason I
+need to specify starting values, even though the help file would lead me
+to believe I don't have to ... perhaps I do when `params` is specified?)
+
+My first attempt is apparently a little too ambitious for `gnls`:
+```{r gnlsfit1, error=TRUE}
+svec <-  list(asymp.L=0.7,
+                asymp.R=c(0.6,0,0),
+                xmid=c(5,0,0),
+                scale=c(1,0,0))
+gnlsfit1 <- gnls(
+    X ~ SSfpl(Day, asymp.L, asymp.R, xmid, scale),
+       data=d,
+       params=list(asymp.R+scale+xmid~Group,asymp.L~1),
+       start=svec)
+```
+
+But I can succeed if I allow only `asymp.R` to vary among groups:
+
+```{r gnlsfit2}
+svec2 <-  list(asymp.L=0.7,
+                asymp.R=c(0.6,0,0),
+                xmid=6,
+                scale=1)
+gnlsfit2 <- gnls(X ~ SSfpl(Day, asymp.L, asymp.R, xmid, scale),data=d,
+       params=list(asymp.R~Group,asymp.L++scale+xmid~1),
+       start=svec2)
+```
+
+Plot predicted values:
+```{r gnlspred}
+predframe <- with(d,expand.grid(Day=unique(Day),Group=levels(Group)))
+predframe$X <- predict(gnlsfit2,newdata=predframe)
+g1 + geom_line(data=predframe,linetype=3,lwd=2,alpha=0.8)
+```
+These look pretty good (it would be nice to get confidence intervals too,
+but that's a little bit too much of a pain for right now -- need to use
+either delta method or bootstrapping).
+
+```{r resids}
+dp <- data.frame(d,res=resid(gnlsfit2),fitted=fitted(gnlsfit2))
+(diagplot1 <- ggplot(dp,aes(x=factor(Individual),
+              y=res,colour=Group))+
+      geom_boxplot(outlier.colour=NULL)+
+  scale_colour_brewer(palette="Dark2"))
+```
+With the exception of individual #7 there's not a lot of evidence
+for among-individual variation ... if we wanted an excuse
+to ignore among-individual variation we could use
+```{r}
+anova(lm(res~Individual,data=dp))
+```
+(whatever philosophical issues this raises about using a large
+$p$-value to accept the 
+null hypothesis that among-individual variation is absent ...)
+
+More general diagnostic plot -- residual vs. fitted, with points from the
+same individual connected with lines.  There is some hint of decreasing
+variance with increasing mean.
+```{r}
+(diagplot2 <- ggplot(dp,aes(x=fitted,y=res,colour=Group))+geom_point()+
+  geom_smooth(aes(group=1),colour="black",method="loess")+
+  geom_path(aes(group=Individual))+
+  geom_hline(yintercept=0,lty=2))
+```
+
+I can't use `nlme` with the more ambitious (three parameters varying
+by group) model, but I can if I only allow `asymp.R` to vary:
+```{r}
+nlmefit1 <- nlme(model  = X ~ SSfpl(Day, asymp.L, asymp.R, xmid, scale),
+     fixed  = list(asymp.R ~ Group, xmid+scale+asymp.L ~1),
+     random = asymp.R ~ 1 | Individual,
+     start =  list(fixed=with(svec2,c(asymp.R,xmid,scale,asymp.L))),
+     data=d)
+```
+
+The estimate of the variance in the right-hand asymptote is non-zero (yay):
+```{r}
+VarCorr(nlmefit1)
+```
+
+Adding the random effects doesn't change the parameters much at all:
+```{r}
+print(mm1 <- merge(data.frame(cc=coef(gnlsfit2)),
+            data.frame(cc=fixef(nlmefit1)),by="row.names"),
+      digits=4)
+maxdiff <- max(apply(mm1[,-1],1,function(x) abs(diff(x)/mean(x))))
+```
+The biggest proportional difference is `r round(100*maxdiff,1)`% (in the `scale`
+parameter).
+
+```{r nlmefit2}
+nlmefit2 <- update(nlmefit1,fixed  = list(asymp.R+xmid+scale+asymp.L ~1),
+  start =  list(fixed=with(svec2,c(asymp.R[1],xmid,scale,asymp.L))))
+```
+
+Wald test for asympR(groupt1)=asympR(groupt2)=0: is $\hat x V^{-1} {\hat x}^\top$ in the upper tail of $\chi^2_2$?
+
+```{r}
+pars <- c("asymp.R.Groupt1","asymp.R.Groupt2")
+ests <- fixef(nlmefit1)
+V_hat <- vcov(nlmefit1)
+R <- rbind(rep(0,length(ests)))
+R[names(ests)  %in% pars] <- 1
+W = as.numeric(t(R %*% ests) %*% solve(R %*% V_hat %*% 
+        t(R)) %*% (R %*% ests))
+pchisq(W,df=3,lower.tail=FALSE)
+```
+Better, we can compare the models via AIC or likelihood ratio test
+(`AICtab` from the `bbmle` package is not essential,
+but gives pretty output):
+```{r modelcomp}
+AICtab(nlmefit1,nlmefit2,weights=TRUE)
+anova(nlmefit1,nlmefit2)
+```
+
+It would be nice to do an $F$ test rather than LRT (i.e.
+accounting for the finite-size correction), but it's a
+little bit more work (and probably not really necessary
+since the answer is so strong).
+
+Check that we have the right structure:
+
+```{r}
+devdiff <- -2*c(logLik(nlmefit2)-logLik(nlmefit1))
+pchisq(devdiff,df=2,lower.tail=FALSE)
+## F-test with very large denominator:
+pf(devdiff/2,df1=2,df2=1000000,lower.tail=FALSE)
+```
+
+```{r nlmefittab,echo=FALSE}
+printCoefmat(rename(data.frame(summary(nlmefit1)$tTable),
+                    c(p.value="Pr(|t|>1)")))
+```
+
+We don't really know the relevant denominator df,
+but the summary above suggests the denominator df is 40
+(based on the usual type of classical-block-design
+analogy for df counting, see Pinheiro and Bates 2000
+or [the glmm wikidot faq](http://glmm.wikidot.com/faq)).
+```{r}
+pf(devdiff/2,df1=2,df2=40,lower.tail=FALSE)
+```
+## TMB
+
+### Minimal example
+
+First try it without random effects, grouping variables, etc.
+(i.e. equivalent to `nls` fit above).
+
+```{r algae1,cache=TRUE}
+writeLines(con="algae1.cpp",
+           "// algae example
+#include <TMB.hpp>
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  DATA_VECTOR(Day);
+  DATA_VECTOR(X);
+  PARAMETER(asympL);
+  PARAMETER(asympR);
+  PARAMETER(xmid);
+  PARAMETER(scale);
+  PARAMETER(logsd);
+  ADREPORT(exp(2*logsd));
+  // for (i=0; i<pred.size(); i++) {
+  vector<Type> pred(Day.size());
+  Type nll;
+  pred = asympL+(asympR-asympL)/(1.0 + exp(-(Day-xmid)/scale));
+  nll = -sum(dnorm(X, pred, exp(logsd), true));
+  return nll;
+}
+")
+compile("algae1.cpp")
+```
+
+```{r}
+dyn.load(dynlib("algae1"))
+## set up data: adjust names, etc.
+d0 <- subset(d,select=c(Day,X))
+## starting values: adjust names, add values
+svec3 <- svec2
+names(svec3) <- gsub("\\.","",names(svec3))  ## remove dots
+svec3$asympR <- 0.6 ## single value
+svec3$logsd <- 1
+obj <- MakeADFun(as.list(d[c("Day","X")]),
+                 svec3,
+                 DLL="algae1",
+                 silent=TRUE)
+do.call("optim",obj)
+class(obj) <- "TMB"
+
+```
+Works fine:
+```{r echo=FALSE}
+tidy(obj)
+```
+
+### Fixed effects model
+
+```{r algae2, cache=TRUE}
+writeLines(con="algae2.cpp",
+           "// algae example
+#include <TMB.hpp>
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  DATA_VECTOR(Day);
+  DATA_VECTOR(X);
+  DATA_MATRIX(R_X);
+  PARAMETER(asympL);
+  PARAMETER_VECTOR(asympR);
+  PARAMETER(xmid);
+  PARAMETER(scale);
+  PARAMETER(logsd);
+  ADREPORT(exp(2*logsd));
+  vector<Type> pred(Day.size());
+  vector<Type> R_val(Day.size());
+  Type nll;
+  R_val = R_X*asympR;
+  pred = asympL+(R_val-asympL)/(1.0 + exp(-(Day-xmid)/scale));
+  nll = -sum(dnorm(X, pred, exp(logsd), true));
+  return nll;
+}
+")
+compile("algae2.cpp")
+```
+
+```{r run_algae2}
+dyn.load(dynlib("algae2"))
+R_X <- model.matrix(~Group,data=d)
+d1 <- c(d0,list(R_X=R_X))
+names(svec2) <- gsub("\\.","",names(svec2))  ## remove dots
+svec2$logsd <- 1
+obj <- MakeADFun(d1,
+                 svec2,
+                 DLL="algae2",
+                 silent=TRUE)
+do.call("optim",obj)
+class(obj) <- "TMB"
+```
+
+```{r tidy_algae2}
+tidy(obj)
+```
+Works, with identical parameters (except for order/names), of course.
+
+### Random effects
+
+Now adding the random effects.
+
+```{r algae3,cache=TRUE}
+writeLines(con="algae3.cpp",
+           "// algae example
+#include <TMB.hpp>
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  DATA_VECTOR(Day);
+  DATA_VECTOR(X);
+  DATA_MATRIX(R_X);
+  DATA_SPARSE_MATRIX(R_Z);
+  PARAMETER(asympL);
+  PARAMETER_VECTOR(asympR);
+  PARAMETER_VECTOR(R_u);
+  PARAMETER(xmid);
+  PARAMETER(scale);
+  PARAMETER(logsd);
+  PARAMETER(logsd_u);
+  ADREPORT(exp(2*logsd));
+  ADREPORT(exp(2*logsd_u));
+  vector<Type> pred(Day.size());
+  vector<Type> R_val(Day.size());
+  Type nll = 0.0;
+  R_val = R_X*asympR+exp(logsd_u)*(R_Z*R_u);
+  pred = asympL+(R_val-asympL)/(1.0 + exp(-(Day-xmid)/scale));
+  nll -= sum(dnorm(X, pred, exp(logsd), true));
+  nll -= sum(dnorm(R_u, 0.0, 1.0, true));
+  return nll;
+}
+")
+compile("algae3.cpp")
+```
+
+```{r run_algae3}
+dyn.load(dynlib("algae3"))
+R_Z <- Matrix::sparse.model.matrix(~Individual-1,data=d)
+d2 <- c(d1,list(R_Z=R_Z))
+svec2B <- c(svec2, list(R_u=rep(0,9),logsd_u=0))
+obj <- MakeADFun(d2,
+                 svec2B,
+                 DLL="algae3",
+                 random="R_u",
+                 silent=TRUE)
+oo1 <- do.call("optim",obj)
+class(obj) <- "TMB"
+tidy(obj)
+obj2 <- MakeADFun(d2,
+                  svec2B,
+                  map=list(asympR=factor(c(1,NA,NA))),
+                  DLL="algae3",
+                  random="R_u",
+                 silent=TRUE)
+oo2 <- do.call("optim",obj2)
+class(obj2) <- "TMB"
+tidy(obj2)
+```
+
+```{r echo=FALSE,eval=FALSE}
+library(brms)
+prior1 <- prior(normal(0, 4), lb=0, nlpar = "asympL") +
+  prior(normal(0, 4), lb=0, nlpar = "asympR") +
+  prior(normal(5,10), lb=0, nlpar="xmid") +
+  prior(normal(0,5), lb=0, nlpar="scale")
+fit1 <- brm(bf(X ~   asympL+(asympR-asympL)/(1.0 + exp(-(Day-xmid)/scale)),
+               asympL+asympR + xmid+scale ~ 1, nl = TRUE),
+            data = d, prior = prior1)
+pairs(fit1)
+
+fit2 <- brm(bf(X ~   asympL+(asympR-asympL)/(1.0 + exp(-(Day-xmid)/scale)),
+               asympL+ xmid+scale ~ 1,
+               asympR ~ Group,
+               nl = TRUE),
+            data = d, prior = prior1)
+```
