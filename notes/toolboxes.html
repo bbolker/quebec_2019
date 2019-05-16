@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Advanced toolboxes for nonlinear optimization</h1>
 <h4 class="author">Ben Bolker</h4>
-<h4 class="date">23:58 15 May 2019</h4>
+<h4 class="date">18:57 16 May 2019</h4>
 
 </div>
 
@@ -319,17 +319,80 @@ Type objective_function&lt;Type&gt;::operator() ()
 <pre><code>## [1] 0</code></pre>
 <pre class="r"><code>dyn.load(dynlib(&quot;tadpole1&quot;))
 data(ReedfrogFuncresp)
-obj &lt;- MakeADFun(as.list(ReedfrogFuncresp),
-                 list(a=1, h=1),
-                 DLL=&quot;tadpole1&quot;,
-                 silent=TRUE)
-## try out function and gradient
+obj &lt;- MakeADFun(data=as.list(ReedfrogFuncresp),
+                 parameters=list(a=1, h=1),
+                 DLL=&quot;tadpole1&quot;)</code></pre>
+<pre><code>## Constructing atomic D_lgamma</code></pre>
+<pre class="r"><code>## try out function and gradient
 obj$fn(a=1,h=1)</code></pre>
 <pre><code>## [1] 488.6209</code></pre>
 <pre class="r"><code>obj$gr(a=1,h=1)</code></pre>
+<pre><code>## outer mgc:  196.8852</code></pre>
 <pre><code>##           [,1]     [,2]
 ## [1,] -5.584761 196.8852</code></pre>
 <pre class="r"><code>res &lt;- do.call(&quot;optim&quot;,obj)  ## could also use nlminb etc.</code></pre>
+<pre><code>## outer mgc:  196.8852 
+## outer mgc:  278.1104 
+## outer mgc:  655.7366 
+## outer mgc:  989.1003 
+## outer mgc:  2499.558 
+## outer mgc:  856.1056 
+## outer mgc:  427.8839 
+## outer mgc:  277.574 
+## outer mgc:  211.8005 
+## outer mgc:  211.2134 
+## outer mgc:  37.91147 
+## outer mgc:  1.874676 
+## outer mgc:  0.152229</code></pre>
+<pre class="r"><code>nlminb(start=obj$par,objective=obj$fn,gradient=obj$gr)</code></pre>
+<pre><code>## outer mgc:  196.8852</code></pre>
+<pre><code>## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation</code></pre>
+<pre><code>## outer mgc:  217.0108</code></pre>
+<pre><code>## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation</code></pre>
+<pre><code>## outer mgc:  1020.448</code></pre>
+<pre><code>## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation
+
+## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation</code></pre>
+<pre><code>## outer mgc:  1037.339</code></pre>
+<pre><code>## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation</code></pre>
+<pre><code>## outer mgc:  747.8333</code></pre>
+<pre><code>## Warning in nlminb(start = obj$par, objective = obj$fn, gradient = obj$gr):
+## NA/NaN function evaluation</code></pre>
+<pre><code>## outer mgc:  523.6315 
+## outer mgc:  510.3677 
+## outer mgc:  146.4597 
+## outer mgc:  227.4284 
+## outer mgc:  176.7625 
+## outer mgc:  93.02825 
+## outer mgc:  4.113549 
+## outer mgc:  1.221435 
+## outer mgc:  0.211021 
+## outer mgc:  0.004228406 
+## outer mgc:  4.758414e-05</code></pre>
+<pre><code>## $par
+##          a          h 
+## 0.52589291 0.01660326 
+## 
+## $objective
+## [1] 46.72136
+## 
+## $convergence
+## [1] 0
+## 
+## $iterations
+## [1] 15
+## 
+## $evaluations
+## function gradient 
+##       27       16 
+## 
+## $message
+## [1] &quot;relative convergence (4)&quot;</code></pre>
 <p>Inference:</p>
 <pre class="r"><code>vv &lt;- sdreport(obj)$cov.fixed
 sds &lt;- sqrt(diag(vv))
