@@ -108,14 +108,15 @@ compile("tadpole1.cpp")
 ```{r}
 dyn.load(dynlib("tadpole1"))
 data(ReedfrogFuncresp)
-obj <- MakeADFun(as.list(ReedfrogFuncresp),
-                 list(a=1, h=1),
-                 DLL="tadpole1",
-                 silent=TRUE)
+obj <- MakeADFun(data=as.list(ReedfrogFuncresp),
+                 parameters=list(a=1, h=1),
+                 DLL="tadpole1")
+
 ## try out function and gradient
 obj$fn(a=1,h=1)
 obj$gr(a=1,h=1)
 res <- do.call("optim",obj)  ## could also use nlminb etc.
+nlminb(start=obj$par,objective=obj$fn,gradient=obj$gr)
 ```
 
 Inference:
