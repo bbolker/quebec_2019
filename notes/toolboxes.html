@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Advanced toolboxes for nonlinear optimization</h1>
 <h4 class="author">Ben Bolker</h4>
-<h4 class="date">23:33 15 May 2019</h4>
+<h4 class="date">23:58 15 May 2019</h4>
 
 </div>
 
@@ -311,7 +311,10 @@ Type objective_function&lt;Type&gt;::operator() ()
   return nll;
 }
 &quot;)</code></pre>
-<p><a href="https://kaskr.github.io/adcomp/group__R__style__distribution.html">TMB documentation for probability distributions</a></p>
+<ul>
+<li><a href="https://kaskr.github.io/adcomp/group__R__style__distribution.html">TMB documentation for probability distributions</a> (<code>dbinom</code>, <code>dnorm</code>, …)</li>
+<li><a href="http://kaskr.github.io/adcomp/convenience_8hpp.html">TMB convenience functions</a> (<code>invlogit</code>)</li>
+</ul>
 <pre class="r"><code>compile(&quot;tadpole1.cpp&quot;)</code></pre>
 <pre><code>## [1] 0</code></pre>
 <pre class="r"><code>dyn.load(dynlib(&quot;tadpole1&quot;))

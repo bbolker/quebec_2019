@@ -98,7 +98,8 @@ Type objective_function<Type>::operator() ()
 ")
 ```
 
-[TMB documentation for probability distributions](https://kaskr.github.io/adcomp/group__R__style__distribution.html)
+- [TMB documentation for probability distributions](https://kaskr.github.io/adcomp/group__R__style__distribution.html) (`dbinom`, `dnorm`, ...)
+- [TMB convenience functions](http://kaskr.github.io/adcomp/convenience_8hpp.html) (`invlogit`)
 
 ```{r compile,cache=TRUE}
 compile("tadpole1.cpp")

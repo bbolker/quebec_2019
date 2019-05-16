@@ -11,6 +11,7 @@ Please share \& remix noncommercially, mentioning its origin.
 
 ```{r pkgs, echo=FALSE,message=FALSE}
 library(glmmTMB)
+library(broom.mixed)
 ```
 
 ## what does it do?
@@ -35,7 +36,7 @@ library(glmmTMB)
 
 ## example
 
-```{r owls}
+```{r owls,message=FALSE}
 library(glmmTMB)
 data("Owls", package="glmmTMB")
 owls_nb1 <- glmmTMB(SiblingNegotiation ~ FoodTreatment*SexParent +
@@ -43,7 +44,6 @@ owls_nb1 <- glmmTMB(SiblingNegotiation ~ FoodTreatment*SexParent +
                     family = nbinom1(), zi = ~FoodTreatment,
                     data=Owls)
 summary(owls_nb1)
-library(broom.mixed)
 tidy(owls_nb1)
 ```
 
