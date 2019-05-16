@@ -1,6 +1,6 @@
 SRCDIR=..
 
-notes += intro linearity likelihood optimization challenges simple latent toolboxes latent_ex lmer_algae nlmm
+notes += intro linearity likelihood optimization challenges simple latent toolboxes latent_ex lmer_algae nlmm glmmTMB
 
 nnhtml := $(notes:%=notes/%.html)
 nnrmd := $(notes:%=notes/%.rmd)

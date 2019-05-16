@@ -31,5 +31,5 @@ Please share \& remix noncommercially, mentioning its origin.
 
 - **in principle** way better
 - nonlin function needs derivatives provided
-- fixed effects are **hard**
+- fixed effects are **hard** to incorporate (need to write the function yourself, or hack the output of `derivs`)
 

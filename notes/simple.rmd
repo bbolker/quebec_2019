@@ -71,4 +71,6 @@ density larvae surviving
 
 Suggested model: $S \sim \textrm{Binom}(p=\beta_0 + \beta_1 D^\beta_2$, N)$
 
+**exercise**: fit a binomial GLM (and possibly a quadratic GLM). Then fit the same model with `bbmle` (hint: `plogis()` is the logistic function). Check that you got the same answers. Then fit the weird power-law model. Find predicted values.  Simulate some values.
+
 ## references

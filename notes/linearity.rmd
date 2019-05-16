@@ -34,6 +34,7 @@ Please share \& remix noncommercially, mentioning its origin.
 - linearization tricks 
      - e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$
 	 - Michaelis-Menten: $y = ax/(b+x) \to 1/y = (b/a) (1/x) + (1/a)$
+	 - power-law (allometric) fitting: $y=ax^b \to \log(y) = a + b \log(x)$
 - borderline:
     - generalized least squares
     - generalized linear models (link function)
@@ -62,22 +63,22 @@ Please share \& remix noncommercially, mentioning its origin.
 
 ## Special-case toolboxes
 
-Common classes of problems have special algorithms that linearize or otherwise solve most of the problem
+Many classes of problems have special algorithms that linearize or otherwise solve most of the problem, then solve a *low-dimensional* nonlinear optimization problem
 
 - Kalman filtering
 - hidden Markov models (Viterbi algorithm)
+- linear mixed models
 - generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
 - generalized least-squares
 - mixture models via expectation-maximization
+- capture-mark-recapture data
+- machine learning (neural networks, random forests, ...)
 
 ## General advice
 
 - simplify problem expression
 - use most efficient algorithms
-- choose sensible starting values (e.g. $\beta=0$ for linear-like models)
-- or use heuristic *self-starting* algorithms to find starting values  
-`apropos("^SS[a-z]",ignore.case=FALSE)`
-
+- good starting values (more later)
 
 
 

@@ -156,3 +156,12 @@ tmpf(fun4,c4)
 par(op)
 ```
 
+## model checking and effect sizes
+
+- we have $p$-values and confidence intervals
+- what about effect size?
+- AIC(c?) still OK
+- $R^2$ analogues; fraction deviance explained or `cor(pred,observed)^2`
+- scaled parameters don't work any more
+
+

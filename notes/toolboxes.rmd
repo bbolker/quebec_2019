@@ -15,6 +15,7 @@ library(rstan)
 library(Deriv)
 library(TMB)
 library(emdbook)
+library(nimble)
 ```
 
 ## calculating derivatives
@@ -58,20 +59,37 @@ deriv(~x^2+y^2, c("x","y"))
 - built into TMB
 - also INLA
 
+## TMB
+
+- Template Model Builder
+- autodiff+Laplace
+- `compile()` + `dyn.load()` + `MakeADFun()` + optimize
+
+## TMB challenges
+
+- installing compilation tools
+- vectorization or not?
+- parameter types
+
+---
+
+![](pix/TMB_components.png)
+
 # Tadpoles in TMB
 
 ```{r}
 writeLines(con="tadpole1.cpp",
            "// Tadpole example
 #include <TMB.hpp>
-template<class Type>
+// next two lines are magic
+template<class Type> 
 Type objective_function<Type>::operator() ()
 {
   DATA_VECTOR(Initial);
   DATA_VECTOR(Killed);
-  PARAMETER(a);
+  PARAMETER(a); // scalar parameters
   PARAMETER(h);
-  Type nll = 0;
+  Type nll = 0; // negative log-likelihood
   for (int i=0; i < Killed.size(); i++) {
       nll -= dbinom(Killed(i), Initial(i), a/(1+a*h*Initial(i)), true);
   }
@@ -79,6 +97,8 @@ Type objective_function<Type>::operator() ()
 }
 ")
 ```
+
+[TMB documentation for probability distributions](https://kaskr.github.io/adcomp/group__R__style__distribution.html)
 
 ```{r compile,cache=TRUE}
 compile("tadpole1.cpp")
@@ -94,8 +114,19 @@ obj <- MakeADFun(as.list(ReedfrogFuncresp),
 ## try out function and gradient
 obj$fn(a=1,h=1)
 obj$gr(a=1,h=1)
-res <- do.call("optim",obj)
+res <- do.call("optim",obj)  ## could also use nlminb etc.
 ```
+
+Inference:
+
+```{r eval=FALSE}
+vv <- sdreport(obj)$cov.fixed
+sds <- sqrt(diag(vv))
+tmbprofile(obj,"a")
+tmbroot(obj,"a")
+```
+
+**exercise**: 
 
 ## Stan
 
@@ -114,8 +145,7 @@ fit <- optimizing(m, data = c(as.list(ReedfrogFuncresp),
   
 ## NIMBLE
 
-```{r message=FALSE}
-library(nimble)
+```{r cache=TRUE,message=FALSE}
 hollingprob <- nimbleFunction(
  run = function(x = integer(1), x0=integer(1), a = double(), h = double()) {
    returnType(double())

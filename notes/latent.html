@@ -191,7 +191,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">Latent variables and mixed models</h1>
 <h4 class="author">Ben Bolker</h4>
-<h4 class="date">07:27 15 May 2019</h4>
+<h4 class="date">23:46 15 May 2019</h4>
 
 </div>
 
@@ -207,8 +207,8 @@ $(document).ready(function () {
 <li>dynamic (state-space) models: process/observation errors</li>
 </ul>
 </div>
-<div id="linear-mixed-models" class="section level2">
-<h2>linear mixed models</h2>
+<div id="generalized-linear-mixed-models" class="section level2">
+<h2>generalized linear mixed models</h2>
 <p><span class="math display">\[
 \begin{split}
 \underbrace{Y_i}_{\text{response}} &amp; \sim \overbrace{\text{Distr}}^{\substack{\text{conditional} \\ \text{distribution}}}(\underbrace{g^{-1}(\eta_i)}_{\substack{\text{inverse} \\ \text{link} \\ \text{function}}},\underbrace{\phi}_{\substack{\text{scale} \\ \text{parameter}}}) \\
@@ -221,6 +221,13 @@ $(document).ready(function () {
 \sim \text{MVN}(\boldsymbol 0, \underbrace{\Sigma(\boldsymbol \theta)}_{\substack{\text{variance-} \\ \text{covariance} \\ \text{matrix}}})
 \end{split}
 \]</span></p>
+</div>
+<div id="nonlinear-mixed-models" class="section level2">
+<h2>nonlinear mixed models</h2>
+<ul>
+<li>same, but use <span class="math inline">\(\boldsymbol X\)</span>, <span class="math inline">\(\boldsymbol Z\)</span> to describe fixed and random effect variation <em>of parameters</em></li>
+</ul>
+<p>(by hand)</p>
 </div>
 <div id="what-are-random-effectslatent-variables" class="section level2">
 <h2>What are random effects/latent variables?</h2>
@@ -313,7 +320,7 @@ legend(&quot;bottomright&quot;,
 <li>Markov chain Monte Carlo (MCMC)
 <ul>
 <li>Gibbs sampling (JAGS, <code>NIMBLE</code>)</li>
-<li>Hamiltonian Monte Carlo (Stan, <code>brms</code>, <code>rstanarm</code>, <code>tmbstan</code></li>
+<li>Hamiltonian Monte Carlo (Stan, <code>brms</code>, <code>rstanarm</code>, <code>tmbstan</code>)</li>
 </ul></li>
 <li>Monte Carlo expectation-maximization (MCEM) (NIMBLE package)</li>
 </ul>

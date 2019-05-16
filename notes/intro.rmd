@@ -9,6 +9,23 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 - data sets
 - please ask questions!
 
+## focus
+
+- "advanced" end users (modelers, not statisticians)
+- mechanistic rather than phenomenological models (cf. @breiman_statistical_2001)
+- work with packages when possible ...
+- ... but ...
+
+<!-- or: <div style="width:300px; height:200px"> ... </div> -->
+![](pix/dracones-768x384.jpg){width=250px}
+
+[Rochester Digital Scholarship lab](https://dslab.lib.rochester.edu/hunt-lenox-globe/)
+
+- things used to be simple (`lm`, `glm`, `nlme`, `lme4` ...)
+- now "let a hundred flowers bloom" (`TMB`, `brms`, `greta`, NIMBLE, ...)
+
+![](pix/Chinese-poster-flowers-smaller.jpg) [Dan Jeffries](http://meuploads.com/2014/08/28/let-hundred-flowers-bloom/)
+
 ## outline
 
 - likelihood estimation and inference
@@ -19,6 +36,7 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 - complex examples/nonlinear mixed models
 
 ![](pix/models-glmm.png)
+
 
 ## tentative schedule
 

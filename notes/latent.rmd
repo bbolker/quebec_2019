@@ -18,7 +18,7 @@ Please share \& remix noncommercially, mentioning its origin.
 - finite mixtures (e.g. mixture models)
 - dynamic (state-space) models: process/observation errors
 
-## linear mixed models
+## generalized linear mixed models
 
 $$
 \begin{split}
@@ -33,6 +33,11 @@ $$
 \end{split}
 $$
 
+## nonlinear mixed models
+
+- same, but use $\boldsymbol X$, $\boldsymbol Z$ to describe fixed and random effect variation *of parameters*
+
+(by hand)
 
 ## What are random effects/latent variables?
 
@@ -121,6 +126,6 @@ Fast, flexible, inaccurate $\leftrightarrow$ slow, restrictive, accurate [@biswa
 
 - Markov chain Monte Carlo (MCMC) 
      - Gibbs sampling (JAGS, `NIMBLE`)
-	 - Hamiltonian Monte Carlo (Stan, `brms`, `rstanarm`, `tmbstan`
+	 - Hamiltonian Monte Carlo (Stan, `brms`, `rstanarm`, `tmbstan`)
 - Monte Carlo expectation-maximization (MCEM) (NIMBLE package)
 

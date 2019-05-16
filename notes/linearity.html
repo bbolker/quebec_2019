@@ -11,7 +11,7 @@
 
 <meta name="author" content="Ben Bolker" />
 
-<meta name="date" content="2019-05-14" />
+<meta name="date" content="2019-05-15" />
 
 <title>(Non)linearity</title>
 
@@ -192,7 +192,7 @@ $(document).ready(function () {
 
 <h1 class="title toc-ignore">(Non)linearity</h1>
 <h4 class="author">Ben Bolker</h4>
-<h4 class="date">14 May 2019</h4>
+<h4 class="date">15 May 2019</h4>
 
 </div>
 
@@ -231,6 +231,7 @@ $(document).ready(function () {
 <ul>
 <li>e.g. generalized Ricker: <span class="math inline">\(y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x\)</span></li>
 <li>Michaelis-Menten: <span class="math inline">\(y = ax/(b+x) \to 1/y = (b/a) (1/x) + (1/a)\)</span></li>
+<li>power-law (allometric) fitting: <span class="math inline">\(y=ax^b \to \log(y) = a + b \log(x)\)</span></li>
 </ul></li>
 <li>borderline:
 <ul>
@@ -268,13 +269,16 @@ $(document).ready(function () {
 </div>
 <div id="special-case-toolboxes" class="section level2">
 <h2>Special-case toolboxes</h2>
-<p>Common classes of problems have special algorithms that linearize or otherwise solve most of the problem</p>
+<p>Many classes of problems have special algorithms that linearize or otherwise solve most of the problem, then solve a <em>low-dimensional</em> nonlinear optimization problem</p>
 <ul>
 <li>Kalman filtering</li>
 <li>hidden Markov models (Viterbi algorithm)</li>
+<li>linear mixed models</li>
 <li>generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)</li>
 <li>generalized least-squares</li>
 <li>mixture models via expectation-maximization</li>
+<li>capture-mark-recapture data</li>
+<li>machine learning (neural networks, random forests, …)</li>
 </ul>
 </div>
 <div id="general-advice" class="section level2">
@@ -282,9 +286,7 @@ $(document).ready(function () {
 <ul>
 <li>simplify problem expression</li>
 <li>use most efficient algorithms</li>
-<li>choose sensible starting values (e.g. <span class="math inline">\(\beta=0\)</span> for linear-like models)</li>
-<li>or use heuristic <em>self-starting</em> algorithms to find starting values<br />
-<code>apropos(&quot;^SS[a-z]&quot;,ignore.case=FALSE)</code></li>
+<li>good starting values (more later)</li>
 </ul>
 </div>
 
