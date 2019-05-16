@@ -2,6 +2,7 @@
 title: Intro material
 author: Ben Bolker
 date: "`r format(Sys.time(), '%d %B %Y')`"
+bibliography: ../nonlin.bib
 ---
 
 - introductions
@@ -47,3 +48,6 @@ date: "`r format(Sys.time(), '%d %B %Y')`"
 - 1330-1500: latent/mixed models
 - 1500-1530: break
 - 1530-1700: advanced examples with `nlmer`/`TMB`/etc.
+
+## references
+
