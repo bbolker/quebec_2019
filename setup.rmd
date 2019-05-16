@@ -44,6 +44,24 @@ There is no need to (re)install packages such as `grid`, `nlme`, `MASS`, `mgcv`,
 
 Also see [Checking the C++ toolchain](https://github.com/stan-dev/rstan/wiki/RStan-Getting-Started) from the Stan installation instructions. (Run `pkgbuild::has_build_tools(debug=TRUE)`.)
 
+## TMB test
 
+Please check that the following code runs without an error on your system: if it doesn't, please send me an e-mail (`bbolker at gmail.com`) with the error message pasted in to the body of the message.
+
+```{r TMB,eval=FALSE}
+library(TMB)
+writeLines(con="test.cpp",
+"#include <TMB.hpp>
+template<class Type>
+Type objective_function<Type>::operator() ()
+{
+  DATA_VECTOR(y);
+  PARAMETER(mu);
+  Type nll = -sum(dnorm(y, mu, 1, true));
+  return nll;
+}
+")
+compile("test.cpp")
+```
 ---
 Last updated: `r Sys.time()`

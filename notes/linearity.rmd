@@ -31,22 +31,22 @@ Please share \& remix noncommercially, mentioning its origin.
 ## what does "linear" include?
 
 - additive models (splines for general smooth continuous functions)
-- linearization tricks (e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$)
+- linearization tricks 
+     - e.g. generalized Ricker: $y = a^b x e^{cx} \to \log(y) = \log(a) + b \log(x) + c x$
+	 - Michaelis-Menten: $y = ax/(b+x) \to 1/y = (b/a) (1/x) + (1/a)$
+	 - power-law (allometric) fitting: $y=ax^b \to \log(y) = a + b \log(x)$
 - borderline:
     - generalized least squares
-    - generalized linear models
+    - generalized linear models (link function)
     - (G)L mixed models
 
 ## Nonlinear models
 
 - everything else 
 
-> "nonlinear" $\leftrightarrow$ most zoology = the study of non-elephant animals (Ulam)
-- most methods use *locally* linear approaches (gradient descent; Newton)
-- today's class will focus on less-canned/one-off solutions
-- special cases not covered:
-     - expectation-maximization algorithm (mixtures/latent variables)
-	 - Laplace approximation (Gaussian latent variables)
+- "nonlinear" $\leftrightarrow$ most zoology = the study of non-elephant animals (Ulam)
+- many methods use *locally* linear approaches (gradient descent; Newton)
+- today's class focuses on less-canned/one-off solutions
 
 ## Simple examples
 
@@ -55,23 +55,30 @@ Please share \& remix noncommercially, mentioning its origin.
 - simple movement models (log-Normal step length/von Mises turning angle)
 - saturating curves (functional responses: Holling/Rogers equation)
 
+## Harder examples
+
+- trajectory-matching ODEs
+- seed shadow models
+- mixture models
+
 ## Special-case toolboxes
 
-Common classes of problems have special algorithms that linearize or otherwise solve most of the problem
+Many classes of problems have special algorithms that linearize or otherwise solve most of the problem, then solve a *low-dimensional* nonlinear optimization problem
 
 - Kalman filtering
 - hidden Markov models (Viterbi algorithm)
+- linear mixed models
 - generalized linear (mixed) models (IRLS/penalized IRLS+Laplace/quadrature)
 - generalized least-squares
+- mixture models via expectation-maximization
+- capture-mark-recapture data
+- machine learning (neural networks, random forests, ...)
 
 ## General advice
 
 - simplify problem expression
 - use most efficient algorithms
-- choose sensible starting values (e.g. $\beta=0$ for linear-like models)
-- or use heuristic *self-starting* algorithms to find starting values  
-`apropos("^SS[a-z]",ignore.case=FALSE)`
-
+- good starting values (more later)
 
 
 

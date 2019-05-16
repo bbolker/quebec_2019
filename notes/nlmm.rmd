@@ -1,0 +1,35 @@
+---
+title: "Nonlinear mixed models"
+author: Ben Bolker
+date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+bibliography: ../nonlin.bib
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+## Nonlinear mixed models
+
+- **Gaussian** response (i.e., not generalized)
+
+## nlme package: advantages
+
+- well-established, stable
+- reasonably well-documented [@pinheiro_mixed-effects_2000]
+- flexible heteroscedasticity models (`weights` argument)
+- residual correlation/R-side effects (`correlation` argument)
+
+## nlme: disadvantages
+
+- Gaussian responses only
+- relatively slow
+- crossed effects are hard
+
+## lme4::nlmer
+
+- **in principle** way better
+- nonlin function needs derivatives provided
+- fixed effects are **hard** to incorporate (need to write the function yourself, or hack the output of `derivs`)
+

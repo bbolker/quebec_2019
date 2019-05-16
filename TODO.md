@@ -2,6 +2,8 @@
 - https://cran.r-project.org/web/views/Optimization.html#least-squares-problems
 - nimble, Stan (as optimizer), brms (for nonlin problems)
 
+- sparsity
+
 - parameterization (logistic etc.)
 - reasons for nonlinear models
     - specific functions in mind
@@ -27,7 +29,9 @@
     - compress ranges
 	- improve quadraticity/Wald-ness
     - decorrelate
-- multstart?
+- multistart?
+
+- latent-variable stuff
 
 # examples
 
@@ -38,6 +42,7 @@
 - tadpoles?
 - Owls?
 - McCoy tadpoles?
+- 
 
 # questionnaire
 

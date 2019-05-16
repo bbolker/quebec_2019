@@ -1,0 +1,131 @@
+---
+title: "Latent variables and mixed models"
+author: Ben Bolker
+date: "`r format(Sys.time(), '%H:%M %d %B %Y ')`"
+bibliography: ../nonlin.bib
+---
+
+![cc](pix/cc-attrib-nc.png)
+Licensed under the 
+[Creative Commons attribution-noncommercial license](http://creativecommons.org/licenses/by-nc/3.0/).
+Please share \& remix noncommercially, mentioning its origin.
+
+## latent/random variables
+
+- spatial
+- temporal
+- continuous mixtures (e.g. Normal)
+- finite mixtures (e.g. mixture models)
+- dynamic (state-space) models: process/observation errors
+
+## generalized linear mixed models
+
+$$
+\begin{split}
+\underbrace{Y_i}_{\text{response}} & \sim \overbrace{\text{Distr}}^{\substack{\text{conditional} \\ \text{distribution}}}(\underbrace{g^{-1}(\eta_i)}_{\substack{\text{inverse} \\ \text{link} \\ \text{function}}},\underbrace{\phi}_{\substack{\text{scale} \\ \text{parameter}}}) \\
+\underbrace{\boldsymbol \eta}_{\substack{\text{linear} \\ \text{predictor}}} & 
+ = 
+\underbrace{\boldsymbol X \boldsymbol \beta}_{\substack{\text{fixed} \\ \text{effects}}} + 
+\underbrace{\boldsymbol Z \boldsymbol b}_{\substack{\text{random} \\ \text{effects}}}
+\\
+\underbrace{\boldsymbol b}_{\substack{\text{conditional} \\ \text{modes}}}  & 
+\sim \text{MVN}(\boldsymbol 0, \underbrace{\Sigma(\boldsymbol \theta)}_{\substack{\text{variance-} \\ \text{covariance} \\ \text{matrix}}})
+\end{split}
+$$
+
+## nonlinear mixed models
+
+- same, but use $\boldsymbol X$, $\boldsymbol Z$ to describe fixed and random effect variation *of parameters*
+
+(by hand)
+
+## What are random effects/latent variables?
+
+A method for …
+
+- modeling correlation of different types
+- accounting for (hypothetical) unobserved variables
+    - group membership (finite mixture models)
+	- activity state (hidden Markov models)
+	- spatial/temporal variation (moving average/CAR/etc.)
+- compromising between *complete pooling* (no among-block variance) and *fixed effects* (large among-block variance)
+- handling levels selected at random from a larger population
+- sharing information among levels (*shrinkage estimation*)
+- estimating variability among levels
+- allowing predictions for unmeasured levels
+ 
+## latent-variable likelihoods
+
+- likelihood:
+
+$$L(x|\beta,\sigma) = \int L(x|\beta,u) \cdot L(u|\sigma) \, du$$
+- likelihood is both *penalized* ($u$ values can't be too spread out) and *integrated* 
+- need:
+     - efficient ways to estimate $\hat u$ (high-dimensional)
+	 - reasonable ways to integrate over distribution of $u$
+
+## shrinkage
+
+- consequence of penalization
+- lower-information groups shrink more
+- "sharing strength"
+
+## shrinkage: *Arabidopsis* conditional modes
+
+```{r arabshrink,fig.height=6,fig.width=8, message=FALSE}
+load("../data/Banta.RData")
+library(plotrix)
+library(lme4)
+z<- subset(dat.tf,amd=="clipped" & nutrient=="1")
+m1 <- glm(total.fruits~gen-1,data=z,family="poisson")
+m2 <- glmer(total.fruits~1+(1|gen),data=z,family="poisson")
+tt <- table(z$gen)
+rr <- unlist(ranef(m2)$gen)[order(coef(m1))]+fixef(m2)
+m1s <- sort(coef(m1))
+m1s[1:2] <- rep(-5,2)
+gsd <- attr(VarCorr(m2)$gen,"stddev")
+gm <- fixef(m2)
+nseq <- seq(-3,6,length.out=50)
+sizefun <- function(x,smin=0.5,smax=3,pow=2) {
+    smin+(smax-smin)*((x-min(x))/diff(range(x)))^pow
+}
+nv <- dnorm(nseq,mean=gm,sd=gsd)
+##
+op <- par(las=1,cex=1.5,bty="l")
+plot(exp(m1s),xlab="Genotype",ylab="Mean fruit set",
+     axes=FALSE,xlim=c(-0.5,25),log="y",yaxs="i",xpd=NA,
+     pch=16,cex=0.5)
+axis(side=1)
+axis(side=2,at=c(exp(-5),0.1,1,10,20),
+     labels=c(0,0.1,1,10,20),cex=0.8)
+##     ylim=c(-3,5))
+polygon(c(rep(0,50),nv*10),exp(c(rev(nseq),nseq)),col="gray",xpd=NA)
+n <- tt[order(coef(m1))]
+points(exp(rr),pch=16,col=adjustcolor("red",alpha=0.5),
+       cex=sizefun(n),xpd=NA)
+## text(seq_along(rr),rr,n,pos=3,xpd=NA,cex=0.6)
+box()
+axis.break(axis=2,breakpos=exp(-4))
+legend("bottomright",
+       c("group mean","shrinkage est."),
+       pch=16,pt.cex=c(1,2),
+       col=c("black",adjustcolor("red",alpha=0.5)),
+       bty="n")
+par(op)
+```
+
+## integration techniques: deterministic
+
+- penalized quasi-likelihood (GLMMs) (`nlme`/`MASS`)
+- Laplace approximation [@peng_advanced_nodate] [link](https://bookdown.org/rdpeng/advstatcomp/laplace-approximation.html#computing-the-posterior-mean): second-order Taylor expansion (`lme4`, `TMB`, `INLA`)
+- (adaptive) Gauss-Hermite quadrature (`lme4`, `GLMMadaptive`)
+
+Fast, flexible, inaccurate $\leftrightarrow$ slow, restrictive, accurate [@biswas2015]
+
+## integration techniques: stochastic
+
+- Markov chain Monte Carlo (MCMC) 
+     - Gibbs sampling (JAGS, `NIMBLE`)
+	 - Hamiltonian Monte Carlo (Stan, `brms`, `rstanarm`, `tmbstan`)
+- Monte Carlo expectation-maximization (MCEM) (NIMBLE package)
+
