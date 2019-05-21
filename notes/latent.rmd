@@ -117,7 +117,7 @@ par(op)
 ## integration techniques: deterministic
 
 - penalized quasi-likelihood (GLMMs) (`nlme`/`MASS`)
-- Laplace approximation [@peng_advanced_nodate] [link](https://bookdown.org/rdpeng/advstatcomp/laplace-approximation.html#computing-the-posterior-mean): second-order Taylor expansion (`lme4`, `TMB`, `INLA`)
+- Laplace approximation [@madsen_introduction_2011; @peng_advanced_nodate] [link](https://bookdown.org/rdpeng/advstatcomp/laplace-approximation.html#computing-the-posterior-mean): second-order Taylor expansion (`lme4`, `TMB`, `INLA`)
 - (adaptive) Gauss-Hermite quadrature (`lme4`, `GLMMadaptive`)
 
 Fast, flexible, inaccurate $\leftrightarrow$ slow, restrictive, accurate [@biswas2015]
